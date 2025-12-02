@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080/api"
+const API_BASE = process.env.REACT_APP_API_URL;
 
 const axiosInstance = axios.create({
     baseURL: API_BASE,
@@ -21,8 +21,7 @@ const setAuthToken = () => {
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
         delete axiosInstance.defaults.headers.common["Authorization"];
-    }    
-    console.log(token);
+    }
 }
 
 export const logoutUser = () => {
@@ -39,4 +38,9 @@ export const loginUser = async (credentials) => {
     localStorage.setItem("authToken", token);
     setAuthToken();
     return response;
+}
+
+export const getCurrentUser = async () => {
+    const response = await axiosInstance.get("/me");
+    return response.data;
 }
