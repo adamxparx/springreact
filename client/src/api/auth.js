@@ -15,10 +15,28 @@ axiosInstance.interceptors.response.use(
     }
 );
 
+const setAuthToken = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+        delete axiosInstance.defaults.headers.common["Authorization"];
+    }    
+    console.log(token);
+}
+
+export const logoutUser = () => {
+    localStorage.removeItem("authToken");
+}
+
 export const registerUser = (user) => {
     return axiosInstance.post("/register", user);
 }
 
-export const loginUser = (credentials) => {
-    return axiosInstance.post("/login", credentials);
+export const loginUser = async (credentials) => {
+    const response = await axiosInstance.post("/login", credentials);
+    const { token } = response.data;
+    localStorage.setItem("authToken", token);
+    setAuthToken();
+    return response;
 }
